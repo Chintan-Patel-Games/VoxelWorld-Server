@@ -1,0 +1,21 @@
+{
+  "name": "voxelworld-server",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@colyseus/schema": "^4.0.11",
+    "@colyseus/ws-transport": "^0.17.9",
+    "colyseus": "^0.17.8",
+    "express": "^4.18.2",
+    "http": "0.0.1-security"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
