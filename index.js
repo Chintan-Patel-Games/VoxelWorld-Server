@@ -60,8 +60,7 @@ class MyRoom extends Room {
 
             player.inputX = data.moveX;
             player.inputZ = data.moveY;
-
-            player.rotY += data.lookX;
+            player.lookX = data.lookX;
 
             if (data.jump && player.grounded) {
                 player.velY = 6;
@@ -77,21 +76,29 @@ class MyRoom extends Room {
 
                 const speed = 5;
 
-                // Rotation-based movement
-                const sin = Math.sin(player.rotY * Math.PI / 180);
-                const cos = Math.cos(player.rotY * Math.PI / 180);
+                // ROTATION
+                player.rotY += player.lookX * 120 * dt;
 
-                const moveX = player.inputX;
-                const moveZ = player.inputZ;
+                const rad = player.rotY * Math.PI / 180;
 
-                const worldX = moveX * cos - moveZ * sin;
-                const worldZ = moveX * sin + moveZ * cos;
+                const forwardX = Math.sin(rad);
+                const forwardZ = Math.cos(rad);
+
+                const rightX = Math.cos(rad);
+                const rightZ = -Math.sin(rad);
+
+                const worldX =
+                    (forwardX * player.inputZ) +
+                    (rightX * player.inputX);
+
+                const worldZ =
+                    (forwardZ * player.inputZ) +
+                    (rightZ * player.inputX);
 
                 player.x += worldX * speed * dt;
                 player.z += worldZ * speed * dt;
-                player.rotY += player.lookX * 120 * dt;
 
-                // Gravity
+                // GRAVITY
                 player.velY -= 20 * dt;
                 player.y += player.velY * dt;
 
@@ -99,6 +106,9 @@ class MyRoom extends Room {
                     player.y = 2;
                     player.velY = 0;
                     player.grounded = true;
+                }
+                else {
+                    player.grounded = false;
                 }
             });
         });
