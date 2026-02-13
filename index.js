@@ -6,12 +6,32 @@ import { Schema, type, MapSchema } from "@colyseus/schema";
    Schema Definitions
 ========================= */
 
-class Player extends Schema {}
+class Player extends Schema {
+    constructor() {
+        super();
+
+        this.x = 0;
+        this.y = 2;
+        this.z = 0;
+        this.rotY = 0;
+
+        this.velY = 0;
+        this.inputX = 0;
+        this.inputZ = 0;
+        this.grounded = false;
+    }
+}
+
 type("number")(Player.prototype, "x");
 type("number")(Player.prototype, "y");
 type("number")(Player.prototype, "z");
-
 type("number")(Player.prototype, "rotY");
+
+// NEW
+type("number")(Player.prototype, "velY");
+type("number")(Player.prototype, "inputX");
+type("number")(Player.prototype, "inputZ");
+type("boolean")(Player.prototype, "grounded");
 
 class State extends Schema {
     constructor() {
@@ -33,14 +53,43 @@ class MyRoom extends Room {
         this.setState(new State());
 
         // Handle movement + spawn correction
-        this.onMessage("move", (client, data) => {
+        this.onMessage("input", (client, data) => {
+
             const player = this.state.players.get(client.sessionId);
             if (!player) return;
 
-            player.x = data.x;
-            player.y = data.y;
-            player.z = data.z;
-            player.rotY = data.rotY;
+            player.inputX = data.moveX;
+            player.inputZ = data.moveY;
+
+            player.rotY += data.lookX * 0.1;
+
+            if (data.jump && player.grounded) {
+                player.velY = 6;
+                player.grounded = false;
+            }
+        });
+
+        this.setSimulationInterval((dt) => {
+
+            this.state.players.forEach((player) => {
+
+                const speed = 5;
+
+                // Horizontal Movement
+                player.x += player.inputX * speed * dt;
+                player.z += player.inputZ * speed * dt;
+
+                // Gravity
+                player.velY -= 20 * dt;
+                player.y += player.velY * dt;
+
+                // Ground Check (TEMP until voxel collision added)
+                if (player.y <= 2) {
+                    player.y = 2;
+                    player.velY = 0;
+                    player.grounded = true;
+                }
+            });
         });
     }
 
