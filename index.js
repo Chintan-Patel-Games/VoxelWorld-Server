@@ -76,7 +76,7 @@ class MyRoom extends Room {
 
                 const speed = 5;
 
-                // ROTATION
+                // ROTATION FIRST
                 player.rotY += player.lookX * 120 * dt;
 
                 const rad = player.rotY * Math.PI / 180;
@@ -87,13 +87,16 @@ class MyRoom extends Room {
                 const rightX = Math.cos(rad);
                 const rightZ = -Math.sin(rad);
 
+                const moveX = player.inputX;
+                const moveZ = player.inputZ;
+
                 const worldX =
-                    (forwardX * player.inputZ) +
-                    (rightX * player.inputX);
+                    forwardX * moveZ +
+                    rightX * moveX;
 
                 const worldZ =
-                    (forwardZ * player.inputZ) +
-                    (rightZ * player.inputX);
+                    forwardZ * moveZ +
+                    rightZ * moveX;
 
                 player.x += worldX * speed * dt;
                 player.z += worldZ * speed * dt;
@@ -102,8 +105,8 @@ class MyRoom extends Room {
                 player.velY -= 20 * dt;
                 player.y += player.velY * dt;
 
-                if (player.y <= 16) {
-                    player.y = 16;
+                if (player.y <= 2) {
+                    player.y = 2;
                     player.velY = 0;
                     player.grounded = true;
                 }
