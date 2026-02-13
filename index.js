@@ -73,8 +73,8 @@ class MyRoom extends Room {
                 const speed = 5;
 
                 // SERVER YAW
-                const lookSensitivity = 120;
-                player.rotY += player.lookX * lookSensitivity * dt;
+                const yawSpeed = 180;
+                player.rotY += player.lookX * yawSpeed * dt;
 
                 const moveX = player.inputX;
                 const moveZ = player.inputZ;
