@@ -15,7 +15,7 @@ const MIN_X = 0;
 const MAX_X = WORLD_SIZE - 1;
 
 const MIN_Z = 0;
-const MAX_Z = WORLD_SIZE - 1;
+const MAX_Z = WORLD_SIZE/2 - 1;
 
 const GROUND_Y = 16;
 
