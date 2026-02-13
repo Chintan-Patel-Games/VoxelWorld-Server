@@ -66,6 +66,7 @@ class MyRoom extends Room {
             if (data.jump && player.grounded) {
                 player.velY = 6;
                 player.grounded = false;
+            }
         });
 
         this.setSimulationInterval((dtMs) => {
