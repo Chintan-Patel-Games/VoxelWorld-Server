@@ -102,8 +102,8 @@ class MyRoom extends Room {
                 player.velY -= 20 * dt;
                 player.y += player.velY * dt;
 
-                if (player.y <= 2) {
-                    player.y = 2;
+                if (player.y <= 16) {
+                    player.y = 16;
                     player.velY = 0;
                     player.grounded = true;
                 }
