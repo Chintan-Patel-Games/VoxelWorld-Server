@@ -97,21 +97,25 @@ class MyRoom extends Room {
         console.log("Client joined:", client.sessionId);
 
         const player = new Player();
-        const chunkSize = 4;
 
-        // Random X/Z inside chunk
+        const chunkSize = 4;
         player.x = Math.floor(Math.random() * chunkSize);
         player.z = Math.floor(Math.random() * chunkSize);
+        player.y = 2;
 
-        // Temporary Y (client will correct)
-        player.y = 0;
+        // 🔥 VERY IMPORTANT
+        player.inputX = 0;
+        player.inputZ = 0;
+        player.velY = 0;
+        player.grounded = false;
 
         this.state.players.set(client.sessionId, player);
 
         console.log(
             `Spawned ${client.sessionId} at X:${player.x} Y:${player.y} Z:${player.z}`
-        );
-    }
+    );
+}
+
 
     onLeave(client) {
         console.log("Client left:", client.sessionId);
