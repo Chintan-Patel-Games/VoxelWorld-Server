@@ -19,7 +19,6 @@ class Player extends Schema {
         this.velY = 0;
         this.inputX = 0;
         this.inputZ = 0;
-        this.jump = false;
         this.grounded = false;
     }
 }
@@ -33,7 +32,6 @@ type("number")(Player.prototype, "lookY");
 type("number")(Player.prototype, "velY");
 type("number")(Player.prototype, "inputX");
 type("number")(Player.prototype, "inputZ");
-type("boolean")(Player.prototype, "jump");
 type("boolean")(Player.prototype, "grounded");
 
 class State extends Schema {
@@ -64,12 +62,15 @@ class MyRoom extends Room {
             player.inputZ = data.moveY;
             player.lookX = data.lookX;
             player.lookY = data.lookY;
-            player.jump = data.jump;
+
+            if (data.jump && player.grounded) {
+                player.velY = 6;
+                player.grounded = false;
         });
 
-        this.setSimulationInterval((dt) => {
+        this.setSimulationInterval((dtMs) => {
 
-            dt = dt / 1000;
+            const dt = dtMs / 1000;
 
             this.state.players.forEach((player) => {
 
