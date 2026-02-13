@@ -55,6 +55,11 @@ class MyRoom extends Room {
 
         // Handle movement + spawn correction
         this.onMessage("input", (client, data) => {
+
+            if (Math.abs(data.moveX) > 0.1 || Math.abs(data.moveY) > 0.1) {
+                console.log("SERVER RECEIVED MOVE:", data.moveX, data.moveY);
+            }
+
             const player = this.state.players.get(client.sessionId);
             if (!player) return;
 
@@ -102,11 +107,13 @@ class MyRoom extends Room {
                 player.z += worldZ * speed * dt;
 
                 // GRAVITY
-                player.velY -= 20 * dt;
-                player.y += player.velY * dt;
+                if (!player.grounded) {
+                    player.velY -= 20 * dt;
+                    player.y += player.velY * dt;
+                }
 
-                if (player.y <= 2) {
-                    player.y = 2;
+                if (player.y <= 16) {
+                    player.y = 16;
                     player.velY = 0;
                     player.grounded = true;
                 }
