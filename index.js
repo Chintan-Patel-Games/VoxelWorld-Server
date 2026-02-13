@@ -59,7 +59,9 @@ class MyRoom extends Room {
             player.inputX = data.moveX;
             player.inputZ = data.moveY;
             player.lookX = data.lookX;
-            player.jump = data.jump;
+
+            if (data.jump)
+                player.jump = true;
         });
 
         this.setSimulationInterval((dtMs) => {
@@ -71,7 +73,8 @@ class MyRoom extends Room {
                 const speed = 5;
 
                 // SERVER YAW
-                player.rotY += player.lookX * 6;
+                const lookSensitivity = 120;
+                player.rotY += player.lookX * lookSensitivity * dt;
 
                 const moveX = player.inputX;
                 const moveZ = player.inputZ;
