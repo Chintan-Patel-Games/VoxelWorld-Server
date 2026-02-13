@@ -3,6 +3,23 @@ import { WebSocketTransport } from "@colyseus/ws-transport";
 import { Schema, type, MapSchema } from "@colyseus/schema";
 
 /* =========================
+   WORLD SETTINGS
+========================= */
+
+const CHUNK_SIZE = 16;
+const WORLD_CHUNKS = 8;
+
+const WORLD_SIZE = CHUNK_SIZE * WORLD_CHUNKS;
+
+const MIN_X = 0;
+const MAX_X = WORLD_SIZE - 1;
+
+const MIN_Z = 0;
+const MAX_Z = WORLD_SIZE - 1;
+
+const GROUND_Y = 16;
+
+/* =========================
    Schema Definitions
 ========================= */
 
@@ -92,16 +109,15 @@ class MyRoom extends Room {
                 const rightX = Math.cos(rad);
                 const rightZ = -Math.sin(rad);
 
-                const worldX =
-                    forwardX * nz +
-                    rightX * nx;
-
-                const worldZ =
-                    forwardZ * nz +
-                    rightZ * nx;
+                const worldX = forwardX * nz + rightX * nx;
+                const worldZ = forwardZ * nz + rightZ * nx;
 
                 player.x += worldX * speed * dt;
                 player.z += worldZ * speed * dt;
+
+                /* -------- WORLD BOUNDARY LOCK -------- */
+                player.x = Math.max(MIN_X, Math.min(MAX_X, player.x));
+                player.z = Math.max(MIN_Z, Math.min(MAX_Z, player.z));
 
                 // JUMP ONLY HERE
                 if (player.jump && player.grounded) {
@@ -132,8 +148,8 @@ class MyRoom extends Room {
 
         const player = new Player();
 
-        player.x = 8;
-        player.z = 8;
+        player.x = 64;
+        player.z = 64;
         player.y = 20;
 
         player.inputX = 0;
