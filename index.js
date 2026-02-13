@@ -54,7 +54,7 @@ class MyRoom extends Room {
 
         // Handle movement + spawn correction
         this.onMessage("input", (client, data) => {
-
+            console.log("INPUT RECEIVED:", data);
             const player = this.state.players.get(client.sessionId);
             if (!player) return;
 
