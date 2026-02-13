@@ -54,7 +54,17 @@ class MyRoom extends Room {
 
         // Handle movement + spawn correction
         this.onMessage("input", (client, data) => {
-            console.log("INPUT RECEIVED:", data);
+
+            const hasMovement =
+                data.moveX !== 0 ||
+                data.moveY !== 0 ||
+                data.lookX !== 0 ||
+                data.jump === true ||
+                data.sprint === true;
+
+            if (hasMovement)
+                console.log("INPUT RECEIVED:", data);
+
             const player = this.state.players.get(client.sessionId);
             if (!player) return;
 
@@ -103,7 +113,6 @@ class MyRoom extends Room {
         player.z = Math.floor(Math.random() * chunkSize);
         player.y = 2;
 
-        // 🔥 VERY IMPORTANT
         player.inputX = 0;
         player.inputZ = 0;
         player.velY = 0;
