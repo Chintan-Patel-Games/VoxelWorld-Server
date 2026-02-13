@@ -15,7 +15,6 @@ class Player extends Schema {
         this.z = 0;
         this.rotY = 0;
         this.lookX = 0;
-        this.lookY = 0;
         this.velY = 0;
         this.inputX = 0;
         this.inputZ = 0;
@@ -28,7 +27,6 @@ type("number")(Player.prototype, "y");
 type("number")(Player.prototype, "z");
 type("number")(Player.prototype, "rotY");
 type("number")(Player.prototype, "lookX");
-type("number")(Player.prototype, "lookY");
 type("number")(Player.prototype, "velY");
 type("number")(Player.prototype, "inputX");
 type("number")(Player.prototype, "inputZ");
@@ -61,12 +59,7 @@ class MyRoom extends Room {
             player.inputX = data.moveX;
             player.inputZ = data.moveY;
             player.lookX = data.lookX;
-            player.lookY = data.lookY;
-
-            if (data.jump && player.grounded) {
-                player.velY = 6;
-                player.grounded = false;
-            }
+            player.jump = data.jump;
         });
 
         this.setSimulationInterval((dtMs) => {
@@ -77,8 +70,16 @@ class MyRoom extends Room {
 
                 const speed = 5;
 
-                // ROTATION FIRST
-                player.rotY += player.lookX * 180 * dt;
+                // SERVER YAW
+                player.rotY += player.lookX * 6;
+
+                const moveX = player.inputX;
+                const moveZ = player.inputZ;
+
+                // NORMALIZE
+                const len = Math.sqrt(moveX * moveX + moveZ * moveZ);
+                const nx = len > 0 ? moveX / len : 0;
+                const nz = len > 0 ? moveZ / len : 0;
 
                 const rad = player.rotY * Math.PI / 180;
 
@@ -88,21 +89,18 @@ class MyRoom extends Room {
                 const rightX = Math.cos(rad);
                 const rightZ = -Math.sin(rad);
 
-                const moveX = player.inputX;
-                const moveZ = player.inputZ;
-
                 const worldX =
-                    forwardX * moveZ +
-                    rightX * moveX;
+                    forwardX * nz +
+                    rightX * nx;
 
                 const worldZ =
-                    forwardZ * moveZ +
-                    rightZ * moveX;
+                    forwardZ * nz +
+                    rightZ * nx;
 
                 player.x += worldX * speed * dt;
                 player.z += worldZ * speed * dt;
 
-                // APPLY JUMP
+                // JUMP ONLY HERE
                 if (player.jump && player.grounded) {
                     player.velY = 6;
                     player.grounded = false;
@@ -119,8 +117,7 @@ class MyRoom extends Room {
                     player.y = 16;
                     player.velY = 0;
                     player.grounded = true;
-                }
-                else {
+                } else {
                     player.grounded = false;
                 }
             });
